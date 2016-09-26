@@ -1,8 +1,24 @@
 # -*- coding: utf-8 -*-
 
+"""Process some integers.
+
+usage: pragma_generator.py [-h] hpp_filename dir_path_to_lib
+
+options:
+    -h, --help  show this help message and exit
+"""
+
 import sys
 import glob, os
-import re
+
+def parser():
+    usage = 'Usage: python {} <hpp_filename> <dir_path_to_lib> [--help]'.format(__file__)
+    arguments = sys.argv
+    if len(arguments) == 1:
+        return usage
+    options = [option for option in arguments if option.startswith('-')]
+    if '-h' in options or '--help' in options:
+        return usage
 
 def fetch_libname(path):
 
@@ -55,4 +71,8 @@ def main():
         print("successed!")
 
 if __name__ == '__main__':
-    main()
+    result = parser()
+    if result:
+        print(result)
+    else:
+        main()
