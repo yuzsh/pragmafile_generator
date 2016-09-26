@@ -2,6 +2,7 @@
 
 import sys
 import glob, os
+import re
 
 def fetch_libname(path):
 
@@ -14,24 +15,48 @@ def fetch_libname(path):
 
     return lib_name
 
-if __name__ == '__main__':
-    file_name = sys.argv[1] if sys.argv[1] else "hogehoge"
-    path = sys.argv[2] if sys.argv[2] else os.getcwd()
+def main():
+    # file_name = sys.argv[1] if sys.argv[1] else "hogehoge"
+    # path = sys.argv[2] if sys.argv[2] else os.getcwd()
+    file_name = "hogehoge"
+    path = "D:\\build\\bin_vtk\\lib\\Debug"
     lib_names = fetch_libname(path)
 
-    pragma_char = ""
+
+    char_name_debug = ""
+    char_name_release = ""
+    pragma_char_debug = ""
+    pragma_char_release = ""
     for name in lib_names:
-        char_name = ','.join(name)
-        pragma_char += "#pragma comment(lib, '"+char_name+"')\n"
-    # print pragma_char
+        debug_libs = []
+        release_libs = []
+        if str(name).rfind("d.lib") == -1: # match release files
+            release_libs = name
+            debug_libs.append(str(name).replace(".lib", "d.lib"))
+        else: # match debug files
+            debug_libs = name
+            release_libs.append(str(name).replace("d.lib", ".lib"))
+
+        char_name_debug = ','.join(debug_libs)
+        pragma_char_debug += "#pragma comment(lib, '" + char_name_debug + "')\n"
+        char_name_release = ','.join(release_libs)
+        # pragma_char_release += "#pragma comment(lib, '" + char_name_release + "')\n"
+        pragma_char_release += "#pragma comment(lib, '" + char_name_debug + "')\n"
+        # print(pragma_char)
 
     try:
-        f = open(file_name+".hpp", "w")
-        f.write("#ifndef "+file_name.upper()+"\n#define "+file_name.upper()+"\n\n"\
-                + pragma_char\
-                + "\n#endif"\
+        f = open(file_name + ".hpp", "w")
+        f.write("#ifndef " + file_name.upper() + "\n#define " + file_name.upper() + "\n\n" \
+                + "#if _DEBUG\n" \
+                + pragma_char_debug \
+                + "#else\n" \
+                + pragma_char_release \
+                + "\n#endif" \
                 )
     except:
-        print "write failed!"
+        print("write failed!")
     finally:
-        print "successed!"
+        print("successed!")
+
+if __name__ == '__main__':
+    main()
