@@ -52,9 +52,9 @@ def main():
             release_libs.append(name.replace("d.lib", ".lib"))
 
         char_name_debug = ','.join(debug_libs)
-        pragma_char_debug += "#pragma comment(lib, '" + char_name_debug + "')\n"
+        pragma_char_debug += '#pragma comment(lib, "' + char_name_debug + '")\n'
         char_name_release = ','.join(release_libs)
-        pragma_char_release += "#pragma comment(lib, '" + char_name_release + "')\n"
+        pragma_char_release += '#pragma comment(lib, "' + char_name_release + '")\n'
 
     try:
         f = open(file_name + ".hpp", "w")
@@ -64,6 +64,7 @@ def main():
                 + "#else\n" \
                 + pragma_char_release \
                 + "\n#endif" \
+                + "\n\n#endif" \
                 )
     except:
         print("write failed!")
